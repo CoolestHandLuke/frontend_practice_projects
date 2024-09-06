@@ -1,61 +1,61 @@
-const choicesInput = document.querySelector('#textarea');
-const choicesParent = document.querySelector('#tags');
+const inputBar = document.querySelector('#filter');
+const userList = document.querySelector('.user-list');
 
-choicesInput.focus();
+// The way the Promise is unpacked is quite untidy. Here, I pull out all the data I need and store it in a list for ease of access
+const formattedUsersList = [];
+getUsers();
 
-let choicesCounter = 0;
-let timer = 0;
-
-choicesInput.addEventListener('keyup', (e) => {
-    if (e.key === 'Enter') {
-        setTimeout(() => {
-            e.target.value = '';
-        }, 10);
-
-        randomSelect();
+inputBar.addEventListener('keyup', (e) => {
+    let allHidden = true;
+    const noResults = document.querySelector('.no-results');
+    const userInput = e.target.value;
+    const userData = document.querySelectorAll('.user-info');
+    userData.forEach((user) => {
+        if (!user.innerText.toLowerCase().includes(userInput.toLowerCase())) {
+            user.parentElement.classList.add('hide');
+        } else {
+            user.parentElement.classList.remove('hide');
+            allHidden = false;
+        }
+    });
+    if (allHidden) {
+        noResults.classList.remove('hide');
+    } else {
+        noResults.classList.add('hide');
     }
-    createNewChoice(e.target.value);
 });
 
-function createNewChoice(input) {
-    const tags = input
-        .split(',')
-        .filter((tag) => tag.trim() !== '')
-        .map((tag) => tag.trim());
-
-    choicesParent.innerHTML = '';
-
-    tags.forEach((tag) => {
-        choicesParent.innerHTML += `<span class="tag">${tag}</span>`;
-    });
-}
-
-function randomSelect() {
-    const times = 30;
-    let counter = 0;
-
-    const interval = setInterval(() => {
-        const randomTag = pickRandomTag();
-        const tags = document.querySelectorAll('.tag');
-        tags.forEach((tag) => {
-            tag.classList.remove('highlight');
-            if (tag === randomTag) {
-                tag.classList.add('highlight');
-            }
+async function getUsers() {
+    try {
+        const data = await fetch('https://randomuser.me/api/?results=30');
+        const parsedData = await data.json();
+        const usersList = parsedData.results;
+        usersList.forEach((user) => {
+            const newUser = {
+                full_name: user.name.first + ' ' + user.name.last,
+                location: user.location.city + ', ' + user.location.country,
+                url: user.picture.thumbnail,
+            };
+            formattedUsersList.push(newUser);
         });
-        counter++;
-
-        if (counter === times) clearInterval(interval);
-    }, 100);
+        userList.innerHTML = `<li class="no-results hide">
+                    <h3>No Results Found!</h3>
+                </li>`;
+        populateUsers(formattedUsersList);
+    } catch (error) {
+        console.log(error);
+    }
 }
 
-function pickRandomTag() {
-    const tags = document.querySelectorAll('.tag');
-    return tags[getRandomInt(0, tags.length)];
-}
-
-function getRandomInt(min, max) {
-    const minCeiled = Math.ceil(min);
-    const maxFloored = Math.floor(max);
-    return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled); // The maximum is exclusive and the minimum is inclusive
+function populateUsers(formattedUsersList) {
+    formattedUsersList.forEach((user) => {
+        const newUserHTML = `<li>
+                            <img src="${user.url}" alt="${user.full_name}">
+                            <div class="user-info">
+                                <h4>${user.full_name}</h4>
+                                <p>${user.location}</p>
+                            </div>
+                        </li>`;
+        userList.innerHTML += newUserHTML;
+    });
 }
