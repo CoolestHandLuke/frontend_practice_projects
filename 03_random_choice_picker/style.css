@@ -18,6 +18,7 @@ body {
     box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
     overflow: hidden;
     width: 300px;
+    margin: 60px;
 }
 
 .title {
@@ -48,10 +49,6 @@ body {
 
 .header input:focus {
     outline: none;
-}
-
-=======
-    margin: 60px;
 }
 
 .container {
@@ -90,7 +87,6 @@ body {
 .header input:focus {
     outline: none;
 }
-
 
 .user-list {
     background-color: #fff;
