@@ -6,6 +6,19 @@ const formattedUsersList = [];
 getUsers();
 
 inputBar.addEventListener('keyup', (e) => {
+    const userInput = e.target.value;
+    const userData = document.querySelectorAll('.user-info');
+    userData.forEach((user) => {
+        if (!user.innerText.includes(userInput)) {
+            user.parentElement.classList.add('hide');
+        } else {
+            user.parentElement.classList.remove('hide');
+        }
+    });
+    console.log(userInput);
+
+    console.log(formattedUsersList);
+=======
     let allHidden = true;
     const noResults = document.querySelector('.no-results');
     const userInput = e.target.value;
@@ -38,6 +51,7 @@ async function getUsers() {
             };
             formattedUsersList.push(newUser);
         });
+
         userList.innerHTML = `<li class="no-results hide">
                     <h3>No Results Found!</h3>
                 </li>`;
