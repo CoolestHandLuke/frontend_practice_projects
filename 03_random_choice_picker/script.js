@@ -18,6 +18,24 @@ inputBar.addEventListener('keyup', (e) => {
     console.log(userInput);
 
     console.log(formattedUsersList);
+=======
+    let allHidden = true;
+    const noResults = document.querySelector('.no-results');
+    const userInput = e.target.value;
+    const userData = document.querySelectorAll('.user-info');
+    userData.forEach((user) => {
+        if (!user.innerText.toLowerCase().includes(userInput.toLowerCase())) {
+            user.parentElement.classList.add('hide');
+        } else {
+            user.parentElement.classList.remove('hide');
+            allHidden = false;
+        }
+    });
+    if (allHidden) {
+        noResults.classList.remove('hide');
+    } else {
+        noResults.classList.add('hide');
+    }
 });
 
 async function getUsers() {
@@ -33,6 +51,10 @@ async function getUsers() {
             };
             formattedUsersList.push(newUser);
         });
+
+        userList.innerHTML = `<li class="no-results hide">
+                    <h3>No Results Found!</h3>
+                </li>`;
         populateUsers(formattedUsersList);
     } catch (error) {
         console.log(error);
