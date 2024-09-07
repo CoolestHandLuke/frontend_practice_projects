@@ -1,8 +1,9 @@
 const inputBar = document.querySelector('#filter');
 const userList = document.querySelector('.user-list');
+const btn = document.querySelector('.btn');
 
 // The way the Promise is unpacked is quite untidy. Here, I pull out all the data I need and store it in a list for ease of access
-const formattedUsersList = [];
+let formattedUsersList = [];
 getUsers();
 
 inputBar.addEventListener('keyup', (e) => {
@@ -24,6 +25,12 @@ inputBar.addEventListener('keyup', (e) => {
     } else {
         noResults.classList.add('hide');
     }
+});
+
+btn.addEventListener('click', () => {
+    userList.innerHTML = '';
+    formattedUsersList = [];
+    getUsers();
 });
 
 async function getUsers() {
